@@ -1,6 +1,25 @@
 {
   "private": true,
   "scripts": {
-    "pre-commit": "cd frontend && npm run pre-commit"
+    "prepare": "husky install",
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "frontend/src/**/*.{js,ts,svelte}": [
+      "cd frontend && prettier --write",
+      "cd frontend && eslint --fix"
+    ],
+    "frontend/src/**/*.{json,css,md}": [
+      "cd frontend && prettier --write"
+    ],
+    "backend/**/*.py": [
+      "black backend",
+      "isort backend",
+      "flake8 backend"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.0"
   }
 }

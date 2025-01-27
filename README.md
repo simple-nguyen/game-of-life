@@ -73,6 +73,19 @@ The frontend includes:
 
 The development server will be available at http://localhost:5173
 
+### Git Hooks
+
+This project uses Husky for managing Git hooks. The hooks are automatically installed when you run `npm install` in the root directory. These hooks ensure code quality by:
+
+- Running ESLint and Prettier on staged frontend files
+- Running Black, isort, and flake8 on staged Python files
+
+The hooks will run automatically before each commit. Make sure to install the dependencies in the root directory:
+
+```bash
+npm install  # Install husky and other dev dependencies
+```
+
 ## Code Quality
 
 ### Backend
