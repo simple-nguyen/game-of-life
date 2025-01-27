@@ -36,7 +36,13 @@ add linter for python
 add a readme in backend
 ```
 
-Adding linting on frontend
+Adding linting on frontend and update readme
 ```
 add linter frontend for svelte and typescript, use esconfig.config.js
+```
+
+Updating readme for frontend
+```
+Update readme for frontend for linting / pre-commit
+Update package.json to install husky per OS which can be different
 ```

@@ -1,36 +1,50 @@
 {
-  "name": "game-of-life",
-  "private": true,
-  "version": "0.0.1",
-  "type": "module",
-  "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "lint": "eslint \"src/**/*.{js,ts,svelte}\"",
-    "lint:fix": "eslint \"src/**/*.{js,ts,svelte}\" --fix",
-    "format": "prettier --write \"src/**/*.{js,ts,svelte,css}\"",
-    "format:check": "prettier --check \"src/**/*.{js,ts,svelte,css}\""
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.19.0",
-    "@sveltejs/adapter-auto": "^3.0.0",
-    "@sveltejs/kit": "^2.0.0",
-    "@sveltejs/vite-plugin-svelte": "^3.0.0",
-    "@tsconfig/svelte": "^5.0.2",
-    "@typescript-eslint/eslint-plugin": "^8.21.0",
-    "@typescript-eslint/parser": "^8.21.0",
-    "eslint": "^9.19.0",
-    "eslint-config-prettier": "^10.0.1",
-    "eslint-plugin-svelte": "^2.46.1",
-    "prettier": "^3.4.2",
-    "prettier-plugin-svelte": "^3.3.3",
-    "svelte": "^4.2.7",
-    "svelte-check": "^3.6.0",
-    "svelte-eslint-parser": "^0.43.0",
-    "tslib": "^2.4.1",
-    "typescript": "^5.0.0",
-    "vite": "^5.0.3"
-  }
+    "name": "game-of-life",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "dev": "vite dev",
+        "build": "vite build",
+        "preview": "vite preview",
+        "check": "svelte-check --tsconfig ./tsconfig.json",
+        "lint": "eslint \"src/**/*.{js,ts,svelte}\"",
+        "lint:fix": "eslint \"src/**/*.{js,ts,svelte}\" --fix",
+        "format": "prettier --write \"src/**/*.{js,ts,svelte,css}\"",
+        "format:check": "prettier --check \"src/**/*.{js,ts,svelte,css}\"",
+        "prepare": "cd .. && husky install frontend/.husky && chmod ug+x frontend/.husky/*",
+        "postinstall": "node -e \"try { require('husky').install() } catch (e) { if (e.code !== 'MODULE_NOT_FOUND') throw e }\"",
+        "pre-commit": "lint-staged"
+    },
+    "lint-staged": {
+        "*.{js,ts,svelte}": [
+            "prettier --write",
+            "eslint --fix"
+        ],
+        "*.{json,css,md}": [
+            "prettier --write"
+        ]
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.19.0",
+        "@sveltejs/adapter-auto": "^3.0.0",
+        "@sveltejs/kit": "^2.0.0",
+        "@sveltejs/vite-plugin-svelte": "^3.0.0",
+        "@tsconfig/svelte": "^5.0.2",
+        "@typescript-eslint/eslint-plugin": "^8.21.0",
+        "@typescript-eslint/parser": "^8.21.0",
+        "eslint": "^9.19.0",
+        "eslint-config-prettier": "^10.0.1",
+        "eslint-plugin-svelte": "^2.46.1",
+        "husky": "^8.0.3",
+        "lint-staged": "^15.2.0",
+        "prettier": "^3.4.2",
+        "prettier-plugin-svelte": "^3.3.3",
+        "svelte": "^4.2.7",
+        "svelte-check": "^3.6.0",
+        "svelte-eslint-parser": "^0.43.0",
+        "tslib": "^2.4.1",
+        "typescript": "^5.0.0",
+        "vite": "^5.0.3"
+    }
 }
