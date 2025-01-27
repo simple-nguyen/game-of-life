@@ -86,3 +86,8 @@ Added frontend tests
 ```
 Add frontend test for components: GameCanvas, Pattern, UserList
 ```
+
+Update root docs for correctness
+```
+Do a runthrough of root readme and ensure most of the development setup are correct
+```

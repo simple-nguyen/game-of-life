@@ -36,6 +36,9 @@ docker-compose logs -f
 docker-compose down
 ```
 
+Requirements:
+- Docker and Docker Compose
+
 The application will be available at:
 - Frontend: http://localhost:80
 - Backend API: http://localhost:8000
@@ -44,24 +47,52 @@ The application will be available at:
 ## Development Setup
 
 ### Backend
+Requirements:
+- Python 3.10 or higher
+- pip
+
 ```bash
 cd backend
+
+# Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Create .env file
+cat > .env << EOL
+CORS_ORIGINS=http://localhost:5173
+EOL
+
+# Start development server
 uvicorn src.main:app --reload
 ```
 
 The backend includes:
 - FastAPI for the REST API and WebSocket server
 - Automatic code formatting with black and isort
-- Linting with flake8
-- Testing with pytest
+- Linting with flake8 (including docstring checks with flake8-docstrings)
+- Testing with pytest and pytest-cov
 
 ### Frontend
+Requirements:
+- Node.js 18 or higher
+- npm
+
 ```bash
 cd frontend
+
+# Install dependencies
 npm install
+
+# Create .env file
+cat > .env << EOL
+BACKEND_URL=http://localhost:8000
+EOL
+
+# Start development server
 npm run dev
 ```
 
@@ -69,7 +100,8 @@ The frontend includes:
 - SvelteKit for the UI
 - TypeScript for type safety
 - ESLint and Prettier for code quality
-- Husky for pre-commit hooks
+- Vitest and Testing Library for testing
+- Static adapter for production builds
 
 The development server will be available at http://localhost:5173
 
@@ -131,6 +163,12 @@ npm run test
 
 ### Using Docker Compose (Recommended)
 ```bash
+# Create production .env file
+cat > .env << EOL
+CORS_ORIGINS=http://localhost:80,http://frontend:80
+BACKEND_URL=http://backend:8000
+EOL
+
 # Build all services
 docker-compose build
 
@@ -143,15 +181,37 @@ docker-compose up -d
 Backend:
 ```bash
 cd backend
+
+# Create production .env file
+cat > .env << EOL
+CORS_ORIGINS=http://localhost:80
+EOL
+
+# Build Docker image
 docker build -t game-of-life-backend .
-docker run -p 8000:8000 game-of-life-backend
+
+# Run container
+docker run -p 8000:8000 \
+  --env-file .env \
+  game-of-life-backend
 ```
 
 Frontend:
 ```bash
 cd frontend
+
+# Create production .env file
+cat > .env << EOL
+BACKEND_URL=http://localhost:8000
+EOL
+
+# Build Docker image
 docker build -t game-of-life-frontend .
-docker run -p 80:80 game-of-life-frontend
+
+# Run container
+docker run -p 80:80 \
+  --env-file .env \
+  game-of-life-frontend
 ```
 
 ## Architecture Decisions
@@ -165,7 +225,7 @@ docker run -p 80:80 game-of-life-frontend
     - Python backend with FastAPI
     - SvelteKit frontend with Nginx
 - Used mathematical average of neighbouring cells for new cell colors
-- Game board limited to 100x100 for interesting patterns
+- Game board limited to 50x30 for interesting patterns
 - Non-toroidal board for simplified calculations
 - Sparse calculation approach for performance optimization
 
@@ -193,9 +253,24 @@ docker run -p 80:80 game-of-life-frontend
 4. Run tests and ensure all checks pass
 5. Submit a pull request
 
-## Challenges / Interesting Encounters
-- Decent AI initialization of project
-- Managing real-time state across multiple clients
-- Color inheritance calculations
-- Docker configuration for development and production
+## Challenges / Interesting Encounters / Thoughts
+- Decent AI initialization of project but left a lot of work to complete
+    - Decent time savings
+- Docker configuration for development and production took some time to figure out the correct setup
 - Cross-service communication setup
+- Implementing the Conway algorithm was fun, I did some reading up prior to starting and went with the sparse approach. I believe this was a fairly-optimal solution for the project as most of the time it was would sparse or converge to sparse grid.
+- AI did a good job of initialising backend test, frontend needed much more manual intervention
+- While I didn't get to complete the deployment to AWS, I believe running in ECS is a good first attempt, this will involve ensuring a domain would be setup to smooth out the process of assigning Route53 records to the service and thus point frontend/backend uris correctly.
+- Went with only passing up updates per cell changes instead of the entire grid to ensure scalability if the grid grew large where the cells are sparse. This reduces the number of updates we need to draw for the number of cells that are alive.
+- Opted for hardcoded grid size which would mostly fit my laptop screen size, this can definitely be customised depending on resolution though opted for this for initial attempt
+- Colors could also be generated randomly but I figured a set of hardcoded colours per player was acceptable which would loop around if it ran out. If the game grew much larger, could look at optimising and allowing choice
+- The currently session are "stored" in memory based on username for speed of lookoup. However, with game configurations likely to persist if there were other settings such as custom colour, then we would want to store it in a DB
+
+## To Do
+After sef-imposed 8 hour limit here are some of the things that I needed left to complete for full production ready build
+
+- Fully flesh out more tests to have more coverage, opted for most logic heavy parts of code
+- Finalize Terraform and deploy to AWS account
+    - Will involve ensuring we have correct domains being passed through as env variables for backend uri
+- Setup Github Actions to apply terraform changes and deploy code (backend and frontend)
+    - Using Github Secrets to store most of our deployment secrets to connect to AWS for Terraform deployment
