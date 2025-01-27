@@ -71,3 +71,8 @@ Moving husky to root
 ```
 Move husky to root to manage both backend and frontend
 ```
+
+Write tests for backend - primarly game_loop
+```
+write backend tests to test the game_loop
+```

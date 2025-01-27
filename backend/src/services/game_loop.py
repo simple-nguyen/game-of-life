@@ -198,7 +198,7 @@ class GameLoop:
         for pos, color in new_state.items():
             if pos not in self.cells or self.cells[pos] != color:
                 if color != "#000000":  # Only send live cells
-                    updates.append(CellUpdate(pos[0], pos[1], color))
+                    updates.append(CellUpdate(pos[0], pos[1], _normalize_color(color)))
                 elif self.cells.get(pos, "#000000") != "#000000":  # Cell died
                     removals.append(CellRemoval(pos[0], pos[1]))
 
