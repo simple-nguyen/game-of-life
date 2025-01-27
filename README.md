@@ -14,16 +14,59 @@ a live cell, as if by reproduction.
 
 Multiple players can join an instance of the game and place live cells in the browser. The game will be played out in real-time, with the next generation being calculated every 1 second.
 
-When cells of differing colours are placed, the new generation will have cells of the colour that is an average of the neighbouring cells.
+When a player joins, they will be assigned a random colour. A player will be identified by their username. A player's cells will live on irrespective of their connection status.
+
+When cells are reproduced, the new generation will have cells of the colour that is an average of the neighbouring cells.
 
 ## How to run project
+Note: Copy the .env.example into .env and set accordingly the env variables
 
+### Backend
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn src.main:app --reload
+```
 
-## How to buid project
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
+The game will be available at http://localhost:5173
+
+## How to build project
+
+### Backend
+```bash
+cd backend
+docker build -t game-of-life-backend .
+docker run -p 8000:8000 game-of-life-backend
+```
+
+### Frontend
+```bash
+cd frontend
+npm run build
+```
 
 ## How to test project
 
+### Backend
+```bash
+cd backend
+pytest --cov=src tests/
+```
+
+### Frontend
+```bash
+cd frontend
+npm run test
+```
 
 ## Decisions
 - Websockets as the transport layer for real-time updates and support multiple clients
@@ -32,11 +75,15 @@ When cells of differing colours are placed, the new generation will have cells o
     - ECS for deploying dockerised backend
     - Load balancer in front of ECS
     - S3 + Cloudfront for frontend
-- Dockerised backend and deployed on ECS for managed servivce
+- Dockerised backend and deployed on ECS for managed service
     - Python
 - Frontend to be deployed as built files onto S3 + Cloudfront
     - Svelte + Typescript
+    - Grid will be drawn on HTML Canvas
 - Used mathemematical average of neighbouring cells to determine colour of new cells
 - Game board will be limited to 100x100 to explore some interesting patterns
 - Game board will not be toroidal to simplify calcuations for this iteration
 - Using a sparse calculation approach as not all cells will be live, don't iterate over dead cells
+
+## Challenges / Interesting Encounters
+- Decent AI initialise of project

@@ -14,8 +14,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
 parts/
 sdist/
 var/
@@ -169,3 +167,32 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Frontend
+node_modules/
+dist/
+.svelte-kit/
+package-lock.json
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Infrastructure
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+.env
+.env.*
+!.env.example
+
+# node files
+node_modules/
