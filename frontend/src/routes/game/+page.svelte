@@ -12,7 +12,7 @@
         if (!$gameState.channelCode) {
             goto('/login');
         }
-        username = $gameState.users[0]?.username || '';
+        username = $gameState.username || '';
         channelCode = $gameState.channelCode;
     });
 

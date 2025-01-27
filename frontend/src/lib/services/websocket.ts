@@ -1,18 +1,26 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 export interface GameState {
     users: { username: string; color: string }[];
-    grid: number[][];
     channelCode: string;
     username: string;
 }
 
+export interface Cell extends Record<string,string>{}
+
 export const gameState = writable<GameState>({
     users: [],
-    grid: [],
     channelCode: '',
     username: '',
 });
+
+export const cells = writable<Cell>({});
+
+interface CellData {
+    x: string;
+    y: string;
+    color: string;
+}
 
 class WebSocketService {
     private ws: WebSocket | null = null;
@@ -31,19 +39,42 @@ class WebSocketService {
             this.ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 switch (data.type) {
-                    case 'game_state':
-                        gameState.update(state => {
-                            const newState = { ...state, grid: data.state };
+                    case 'cell_updates':
+                        cells.update(state => {
+                            const newState = { ...state  };
+                            data.updates.forEach(({ x, y, color }: CellData) => {
+                                newState[`${x},${y}`] = color;
+                            });
+                          return newState;
+                        });
+                        break;
+                    case 'cell_removals':
+                        cells.update(state => {
+                            const newState = { ...state  };
+                            data.removals.forEach(({ x, y }: CellData) => {
+                                delete newState[`${x},${y}`];
+                            });
+                          return newState;
+                        });
+                        break;
+                    case 'cell_update':
+                        cells.update(state => {
+                            const newState = { ...state, [`${data.x},${data.y}`]: data.color };
                             return newState;
                         });
                         break;
+                    case 'full_update':
+                        cells.set(data.state);
+                        break;
                     case 'channel_code':
                         const code = data.code;
-                        gameState.update(state => {
-                            const newState = { ...state, channelCode: code };
-                            return newState;
-                        });
-                        resolve(code);
+                        if (code) {
+                            gameState.update(state => {
+                                const newState = { ...state, channelCode: code };
+                                return newState;
+                            });
+                            resolve(code);
+                        }
                         break;
                     case 'user_list':
                         gameState.update(state => {
@@ -66,11 +97,13 @@ class WebSocketService {
         }
     }
 
-    updateCell(x: number, y: number) {
+    placeCell(x: number, y: number) {
+        const currentGameState = get(gameState);
         this.sendMessage({
-            type: 'update_cell',
+            type: 'place_cell',
             x,
-            y
+            y,
+            color: currentGameState.users.find(u => u.username === currentGameState.username)?.color
         });
     }
 

@@ -1,16 +1,28 @@
-from typing import Dict, List
-from fastapi import WebSocket
 import asyncio
 import logging
+from typing import Dict, List
+
+from fastapi import WebSocket
+
 from .game_loop import GameLoop
 
 logger = logging.getLogger(__name__)
 
 COLORS = [
-    "#FF0000", "#00FF00", "#0000FF", "#FF00FF", 
-    "#00FFFF", "#FFA500", "#800080", "#008000",
-    "#FFC0CB", "#FFD700", "#4B0082", "#7B68EE"
+    "#FF0000",
+    "#00FF00",
+    "#0000FF",
+    "#FF00FF",
+    "#00FFFF",
+    "#FFA500",
+    "#800080",
+    "#008000",
+    "#FFC0CB",
+    "#FFD700",
+    "#4B0082",
+    "#7B68EE",
 ]
+
 
 class GameSession:
     def __init__(self):
@@ -30,9 +42,11 @@ class GameSession:
             self.user_colors[username] = color
             return color
 
-    async def add_user(self, username: str, websocket: WebSocket) -> List[Dict[str, str]]:
+    async def add_user(
+        self, username: str, websocket: WebSocket
+    ) -> List[Dict[str, str]]:
         """Add a user to the session.
-        
+
         Args:
             username: User's identifier
             websocket: User's WebSocket connection
@@ -40,19 +54,22 @@ class GameSession:
         self.set_and_get_user_color(username)
         self.users[username] = websocket
         logger.info(f"User {username} joined the session")
-        
+
         if not self.running:
             await self.start_game()
-        
+
         # Send current game state to the new user
         await self.send_game_state(username)
 
         # Return list of user color dictionaries
-        return [{"username": user, "color": color} for user, color in self.user_colors.items()]
+        return [
+            {"username": user, "color": color}
+            for user, color in self.user_colors.items()
+        ]
 
     async def remove_user(self, username: str) -> None:
         """Remove a user from the session.
-        
+
         Args:
             username: User's identifier
         """
@@ -62,7 +79,7 @@ class GameSession:
 
     def has_users(self) -> bool:
         """Check if the session has any users.
-        
+
         Returns:
             bool: True if there are users, False otherwise
         """
@@ -70,19 +87,27 @@ class GameSession:
 
     async def handle_message(self, username: str, data: dict) -> None:
         """Handle a message from a user.
-        
+
         Args:
             username: User's identifier
             data: Message data
         """
-        message_type = data.get('type')
-        
-        if message_type == 'place_cell':
-            x = data.get('x')
-            y = data.get('y')
-            if x is not None and y is not None:
-                self.game_loop.place_cell(x, y, username)
-                await self.broadcast_game_state()
+        message_type = data.get("type")
+
+        if not self.user_colors[username]:
+            return
+
+        if message_type == "place_cell":
+            x = data.get("x")
+            y = data.get("y")
+            color = data.get("color")
+            if x is not None and y is not None and color is not None:
+                self.game_loop.place_cell(x, y, self.user_colors[username])
+                await self.broadcast(
+                    {"type": "cell_update", "x": x, "y": y, "color": color}
+                )
+            else:
+                logger.error(f"Invalid place_cell message from {username}: {data}")
 
     async def broadcast(self, message: dict) -> None:
         disconnected_users = []
@@ -92,7 +117,7 @@ class GameSession:
             except Exception as e:
                 logger.error(f"Error broadcasting to {username}: {str(e)}")
                 disconnected_users.append(username)
-        
+
         for username in disconnected_users:
             logger.info(f"Removing disconnected user: {username}")
             self.remove_user(username)
@@ -103,10 +128,7 @@ class GameSession:
             return
 
         state = self.game_loop.get_state()
-        message = {
-            'type': 'game_state',
-            'state': state
-        }
+        message = {"type": "full_update", "state": state}
 
         for websocket in self.users.values():
             try:
@@ -116,7 +138,7 @@ class GameSession:
 
     async def send_game_state(self, username: str) -> None:
         """Send the current game state to a specific user.
-        
+
         Args:
             username: User's identifier
         """
@@ -124,10 +146,7 @@ class GameSession:
             return
 
         state = self.game_loop.get_state()
-        message = {
-            'type': 'game_state',
-            'state': state
-        }
+        message = {"type": "full_update", "state": state}
 
         try:
             await self.users[username].send_json(message)
@@ -153,8 +172,23 @@ class GameSession:
         """Run the game loop."""
         while self.running:
             try:
-                self.game_loop.next_generation()
-                await self.broadcast_game_state()
+                updates, removals = self.game_loop.update_game_state()
+                if updates:
+                    await self.broadcast(
+                        {
+                            "type": "cell_updates",
+                            "updates": [
+                                {"x": u.x, "y": u.y, "color": u.color} for u in updates
+                            ],
+                        }
+                    )
+                if removals:
+                    await self.broadcast(
+                        {
+                            "type": "cell_removals",
+                            "removals": [{"x": r.x, "y": r.y} for r in removals],
+                        }
+                    )
                 await asyncio.sleep(1)  # Update every second
             except Exception as e:
                 logger.error(f"Error in game loop: {str(e)}")

@@ -1,67 +1,69 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { wsService, gameState } from '$lib/services/websocket';
+    import { wsService, cells } from '$lib/services/websocket';
 
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D;
-    let cellSize = 20;
+    const cellSize = 20;
+    const gridWidth = 50;
+    const gridHeight = 30;
+    const canvasWidth = gridWidth * cellSize;
+    const canvasHeight = gridHeight * cellSize;
     let isDrawing = false;
-
-    $: if (canvas && $gameState.grid) {
-        drawGrid();
-    }
 
     onMount(() => {
         ctx = canvas.getContext('2d')!;
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        return () => {
-            window.removeEventListener('resize', resizeCanvas);
-        };
-    });
-
-    function resizeCanvas() {
-        const container = canvas.parentElement!;
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
         drawGrid();
-    }
+    });
 
     function drawGrid() {
         if (!ctx) return;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const rows = $gameState.grid.length;
-        const cols = $gameState.grid[0]?.length || 0;
-
-        // Draw cells
-        for (let y = 0; y < rows; y++) {
-            for (let x = 0; x < cols; x++) {
-                const cellValue = $gameState.grid[y][x];
-                if (cellValue) {
-                    const user = $gameState.users.find(u => u.color === cellValue);
-                    if (user) {
-                        ctx.fillStyle = user.color;
-                        ctx.fillRect(x * cellSize, y * cellSize, cellSize - 1, cellSize - 1);
-                    }
-                }
-            }
-        }
-
-        // Draw grid lines
         ctx.strokeStyle = '#ddd';
-        ctx.beginPath();
-        for (let x = 0; x <= cols; x++) {
-            ctx.moveTo(x * cellSize, 0);
-            ctx.lineTo(x * cellSize, rows * cellSize);
+        ctx.lineWidth = 1;
+
+        // Draw vertical lines
+        for (let x = 0; x <= canvasWidth; x += cellSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvasHeight);
+            ctx.stroke();
         }
-        for (let y = 0; y <= rows; y++) {
-            ctx.moveTo(0, y * cellSize);
-            ctx.lineTo(cols * cellSize, y * cellSize);
+
+        // Draw horizontal lines
+        for (let y = 0; y <= canvasHeight; y += cellSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvasWidth, y);
+            ctx.stroke();
         }
-        ctx.stroke();
+    }
+
+    function drawCells() {
+        if (!ctx) return;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        drawGrid();
+
+        // Draw cells using the store value
+        if ($cells) {
+            Object.entries($cells).forEach(([key, color]) => {
+                const [x, y] = key.split(',').map(Number);
+                if (!isNaN(x) && !isNaN(y)) {  
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x * cellSize + 1, y * cellSize + 1, cellSize - 2, cellSize - 2);
+                }
+            });
+        }
+    }
+
+    // More robust reactive statement
+    $: if (ctx && $cells) {
+        console.log('Cells updated:', Object.keys($cells).length);
+        drawCells();
     }
 
     function handleMouseDown(e: MouseEvent) {
@@ -80,12 +82,25 @@
     }
 
     function updateCell(e: MouseEvent) {
-        const rect = canvas.getBoundingClientRect();
-        const x = Math.floor((e.clientX - rect.left) / cellSize);
-        const y = Math.floor((e.clientY - rect.top) / cellSize);
+        if (!ctx) return;
 
-        if (x >= 0 && x < $gameState.grid[0].length && y >= 0 && y < $gameState.grid.length) {
-            wsService.updateCell(x, y);
+        const canvas = event.target as HTMLCanvasElement;
+        const rect = canvas.getBoundingClientRect();
+        const containerElement = canvas.parentElement;
+
+        if (!containerElement) return;
+
+        const viewportX = event.clientX;
+        const viewportY = event.clientY;
+
+        const canvasX = viewportX - rect.left;
+        const canvasY = viewportY - rect.top;
+
+        const gridX = Math.floor(canvasX / cellSize);
+        const gridY = Math.floor(canvasY / cellSize);
+
+        if (gridX >= 0 && gridX < gridWidth && gridY >= 0 && gridY < gridHeight) {
+            wsService.placeCell(gridX, gridY);
         }
     }
 </script>
