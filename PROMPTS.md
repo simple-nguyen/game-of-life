@@ -81,3 +81,8 @@ Added additional test - beacon
 ```
 add another test in game_loop for the beacon pattern
 ```
+
+Added frontend tests
+```
+Add frontend test for components: GameCanvas, Pattern, UserList
+```
