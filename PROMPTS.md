@@ -66,3 +66,8 @@ Fix husky in dockerfile
 Fix husky in local development for any os
 Update root README
 ```
+
+Moving husky to root
+```
+Move husky to root to manage both backend and frontend
+```
