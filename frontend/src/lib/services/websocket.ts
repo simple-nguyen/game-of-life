@@ -17,8 +17,8 @@ class WebSocketService {
 
     connect(username: string, channelCode: string): Promise<boolean> {
         return new Promise((resolve) => {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            const backendUrl = import.meta.env.VITE_BACKEND_WS_URL || 'ws://localhost:8000';
+            const wsUrl = `${backendUrl}/ws`;
             
             this.ws = new WebSocket(wsUrl);
             
