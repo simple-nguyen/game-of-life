@@ -1,4 +1,4 @@
-This is a list of prompts used within this project, by order of usage. I will commmit the code after every prompt and note if AI used or not:
+This is a list of prompts used within this project, by order of usage. I will commmit the code after every prompt and note if AI used or not: (model: claude3.5)
 
 ```
 Based on the project readme, initalise my project, including .github, terraform, backend and frontend
@@ -36,3 +36,7 @@ add linter for python
 add a readme in backend
 ```
 
+Adding linting on frontend
+```
+add linter frontend for svelte and typescript, use esconfig.config.js
+```
