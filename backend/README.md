@@ -1,86 +1,90 @@
 # Game of Life Backend
 
-This is the backend service for Conway's Game of Life implementation. It provides a WebSocket-based API for real-time game state updates and multiplayer functionality.
+This is the backend server for Conway's Game of Life, built with FastAPI and Python.
 
-## Features
+## Development Setup
 
-- Real-time game state management using WebSockets
-- Multiplayer support with unique game sessions
-- Color-based cell visualization
-- Implementation of Conway's Game of Life rules with color inheritance
+1. Create and activate a virtual environment:
 
-## Setup
-
-1. Install dependencies:
 ```bash
-pip3 install -r requirements.txt
+python -m venv venv
+source venv/bin/activate  # On Windows, use: venv\Scripts\activate
 ```
 
-2. Run the server:
+2. Install dependencies:
+
 ```bash
-python3 -m uvicorn src.main:app --reload
+pip install -r requirements.txt
 ```
 
-The server will start at `http://localhost:8000` by default.
+3. Start the development server:
 
-## Development
-
-### Code Style
-
-The project uses several tools to maintain code quality:
-
-- **Black**: Code formatter
-  ```bash
-  python3 -m black src/ tests/
-  ```
-
-- **isort**: Import sorter
-  ```bash
-  python3 -m isort src/ tests/
-  ```
-
-- **flake8**: Linter
-  ```bash
-  python3 -m flake8 src/ tests/
-  ```
-
-### Project Structure
-
+```bash
+uvicorn src.main:app --reload
 ```
-backend/
-├── src/
-│   ├── services/
-│   │   ├── game_loop.py      # Core game logic
-│   │   ├── game_session.py   # Session management
-│   │   └── websocket_service.py  # WebSocket handling
-│   └── main.py              # FastAPI application
-├── tests/                   # Test files
-├── requirements.txt         # Project dependencies
-├── pyproject.toml          # Tool configurations
-└── .flake8                 # Flake8 configuration
+
+## Code Quality Tools
+
+We use several tools to maintain code quality:
+
+### Automatic Code Formatting and Linting
+
+Python code is automatically formatted and linted on commit using husky and lint-staged. The following tools are run:
+
+- **black**: Code formatting
+- **flake8**: Style guide enforcement
+  - flake8-docstrings: Docstring style checking
+  - flake8-quotes: Quote style checking
+  - flake8-bugbear: Bug finding
+- **isort**: Import sorting
+
+To manually run the formatters:
+
+```bash
+# Format with black
+black .
+
+# Sort imports
+isort .
+
+# Run flake8
+flake8 .
 ```
+
+### Configuration Files
+
+- `setup.cfg`: Configuration for flake8 and isort
+
+The linting script is located in `/scripts/lint-python.sh` and is automatically run by husky pre-commit hooks.
 
 ## Testing
 
-Run tests using pytest:
+Run tests with:
 ```bash
-python3 -m pytest
+pytest
 ```
 
-## API Documentation
+For coverage report:
+```bash
+pytest --cov=src
+```
 
-The WebSocket endpoint is available at:
-- `/ws/{channel_code}/{username}` - Connect to a game session
-  - `channel_code`: Session identifier (use "new" for a new session)
-  - `username`: Player identifier
+## Project Structure
 
-### WebSocket Messages
+```
+backend/
+├── src/           # Source code
+├── tests/         # Test files
+├── requirements.txt   # Project dependencies
+└── setup.cfg      # Tool configurations
+```
 
-Messages are JSON-formatted with the following types:
+## Contributing
 
-- `cell_update`: Single cell update
-- `cell_updates`: Multiple cell updates
-- `cell_removals`: Remove cells
-- `full_update`: Complete game state
-- `channel_code`: Session identifier
-- `user_list`: Connected players
+1. Ensure you have Python 3.8+ and pip installed
+2. Create and activate a virtual environment
+3. Install dependencies: `pip install -r requirements.txt`
+4. Make your changes
+5. Run tests and ensure all checks pass
+6. Commit your changes (this will trigger automatic formatting and linting)
+7. Push to your fork and submit a pull request

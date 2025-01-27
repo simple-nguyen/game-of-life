@@ -23,6 +23,9 @@
         ],
         "*.{json,css,md}": [
             "prettier --write"
+        ],
+        "*.py": [
+            "../scripts/lint-python.sh"
         ]
     },
     "devDependencies": {

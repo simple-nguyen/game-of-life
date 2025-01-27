@@ -46,3 +46,10 @@ Updating readme for frontend
 Update readme for frontend for linting / pre-commit
 Update package.json to install husky per OS which can be different
 ```
+
+Adding precommit for python
+```
+Added pre-commit to python, keep files in the backend
+Fix error 
+[ERROR] Cowardly refusing to install hooks with `core.hooksPath` set.
+```
