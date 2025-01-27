@@ -1,4 +1,4 @@
-`<script lang="ts">
+<script lang="ts">
     import { onMount } from 'svelte';
     import { wsService, gameState } from '$lib/services/websocket';
 
@@ -104,4 +104,4 @@
         background-color: white;
         cursor: pointer;
     }
-</style>`
+</style>

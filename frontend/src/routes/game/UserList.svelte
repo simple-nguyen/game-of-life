@@ -1,4 +1,4 @@
-`<script lang="ts">
+<script lang="ts">
     import { gameState } from '$lib/services/websocket';
 </script>
 
@@ -52,4 +52,4 @@
         font-size: 0.9rem;
         color: #666;
     }
-</style>`
+</style>

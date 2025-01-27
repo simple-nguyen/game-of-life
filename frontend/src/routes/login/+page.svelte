@@ -1,4 +1,4 @@
-`<script lang="ts">
+<script lang="ts">
     import { goto } from '$app/navigation';
     import { wsService } from '$lib/services/websocket';
 
@@ -114,4 +114,4 @@
         margin-top: 0.5rem;
         text-align: center;
     }
-</style>`
+</style>

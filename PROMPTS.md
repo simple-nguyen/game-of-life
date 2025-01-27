@@ -24,3 +24,8 @@ now we will focus on the frontend. we want to ensure the app has structured dire
 
 the frontend is a svelte project
 ```
+
+Find and fix initialisation of frontend boostrapping
+```
+check the entirety of frontend and ensure all necessary files are created to initialise the app
+```
