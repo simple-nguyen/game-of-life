@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "scripts": {
+    "pre-commit": "cd frontend && npm run pre-commit"
+  }
+}

@@ -16,15 +16,15 @@
         "pre-commit": "lint-staged"
     },
     "lint-staged": {
-        "*.{js,ts,svelte}": [
+        "src/**/*.{js,ts,svelte}": [
             "prettier --write",
             "eslint --fix"
         ],
-        "*.{json,css,md}": [
+        "src/**/*.{json,css,md}": [
             "prettier --write"
         ],
-        "*.py": [
-            "node scripts/lint-python.js"
+        "**/*.py": [
+            "cd .. && node scripts/lint-python.js"
         ]
     },
     "devDependencies": {
