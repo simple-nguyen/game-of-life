@@ -265,6 +265,7 @@ docker run -p 80:80 \
 - Opted for hardcoded grid size which would mostly fit my laptop screen size, this can definitely be customised depending on resolution though opted for this for initial attempt
 - Colors could also be generated randomly but I figured a set of hardcoded colours per player was acceptable which would loop around if it ran out. If the game grew much larger, could look at optimising and allowing choice
 - The currently session are "stored" in memory based on username for speed of lookoup. However, with game configurations likely to persist if there were other settings such as custom colour, then we would want to store it in a DB
+- Should have written tests earlier instead of leaving it until the end. It did pick up on one error I could have missed with the incorrect color coming through which would not have been rendered correctly.
 
 ## To Do
 After sef-imposed 8 hour limit here are some of the things that I needed left to complete for full production ready build
