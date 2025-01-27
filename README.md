@@ -254,6 +254,7 @@ docker run -p 80:80 \
 5. Submit a pull request
 
 ## Challenges / Interesting Encounters / Thoughts
+- Went full in on the deep end as I haven't worked with Python and Svelte in detail before. Took a bit of time getting my head around syntax and patterns. AI helped me get up to speed as it gave me example code.
 - Decent AI initialization of project but left a lot of work to complete
     - Decent time savings
 - Docker configuration for development and production took some time to figure out the correct setup
