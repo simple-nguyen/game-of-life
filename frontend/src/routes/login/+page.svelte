@@ -12,8 +12,8 @@
             return;
         }
 
-        const connected = await wsService.connect(username, channelCode);
-        if (connected) {
+        const _channelCode = await wsService.connect(username, channelCode);
+        if (_channelCode) {
             goto('/game');
         } else {
             error = 'Failed to connect to game server';

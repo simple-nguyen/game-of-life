@@ -1,4 +1,4 @@
-<script lang="ts">
+`<script lang="ts">
     import { onMount, onDestroy } from 'svelte';
     import { wsService, gameState } from '$lib/services/websocket';
     import GameCanvas from './GameCanvas.svelte';
@@ -9,7 +9,6 @@
     let channelCode: string;
 
     onMount(() => {
-        // If no connection, redirect to login
         if (!$gameState.channelCode) {
             goto('/login');
         }
@@ -85,4 +84,4 @@
         margin: 0;
         font-size: 1.5rem;
     }
-</style>
+</style>`
