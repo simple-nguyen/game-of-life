@@ -49,7 +49,7 @@
         flex-direction: column;
         gap: 0.5rem;
         padding: 0.5rem;
-        background: #b0ffc6;
+        background: #0e421c;
     }
 
     .top-nav {
