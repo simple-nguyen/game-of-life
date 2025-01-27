@@ -29,3 +29,10 @@ Find and fix initialisation of frontend boostrapping
 ```
 check the entirety of frontend and ensure all necessary files are created to initialise the app
 ```
+
+Adding linting and documentation
+```
+add linter for python
+add a readme in backend
+```
+
