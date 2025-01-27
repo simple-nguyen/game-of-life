@@ -1,44 +1,76 @@
 <script lang="ts">
     import { gameState } from '$lib/services/websocket';
+
+    let isExpanded = true;
+
+    function toggleUserList() {
+        isExpanded = !isExpanded;
+    }
 </script>
 
 <div class="user-list">
-    <h2>Connected Users</h2>
-    <div class="users">
-        {#each $gameState.users as user}
-            <div class="user-item">
-                <div class="user-color" style="background-color: {user.color}"></div>
-                <span class="user-name">{user.username}</span>
-            </div>
-        {/each}
-    </div>
+    <button class="user-list-header" on:click="{toggleUserList}">
+        <h4>Users ({$gameState.users.length})</h4>
+        <span class="toggle-icon">{isExpanded ? '▼' : '▶'}</span>
+    </button>
+    {#if isExpanded}
+        <div class="users">
+            {#each $gameState.users as user}
+                <div class="user-item" class:current="{user.username === $gameState.username}">
+                    <span class="user-name">{user.username}</span>
+                    <div class="user-color" style="background-color: {user.color};"></div>
+                </div>
+            {/each}
+        </div>
+    {/if}
 </div>
 
 <style>
     .user-list {
         padding: 1rem;
+        background: white;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid gray;
     }
 
-    h2 {
-        margin: 0 0 1rem 0;
-        font-size: 1.2rem;
-        color: #333;
+    .user-list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding: 0 0.25rem;
+        width: 100%;
+        background: none;
+        border: none;
+        text-align: left;
+    }
+
+    .user-list-header h4 {
+        margin: 0.5rem 0;
+        color: black;
     }
 
     .users {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
+        margin-top: 0.25rem;
     }
 
     .user-item {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 0.5rem;
         padding: 0.5rem;
-        background-color: white;
-        border-radius: 4px;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        margin: 0.25rem 0;
+        border: 1px solid #ddd;
+    }
+
+    .user-item.current {
+        background: #d7fddd;
+    }
+
+    .user-name {
+        font-size: 0.9rem;
+        color: #666;
     }
 
     .user-color {
@@ -48,8 +80,8 @@
         border: 1px solid #ddd;
     }
 
-    .user-name {
-        font-size: 0.9rem;
+    .toggle-icon {
+        font-size: 0.8rem;
         color: #666;
     }
 </style>

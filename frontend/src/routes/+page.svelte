@@ -8,9 +8,7 @@
     });
 </script>
 
-<div>
-    Redirecting to login...
-</div>
+<div>Redirecting to login...</div>
 
 <style>
     div {

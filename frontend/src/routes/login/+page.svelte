@@ -24,13 +24,13 @@
 <div class="login-container">
     <div class="login-box">
         <h1>Game of Life</h1>
-        <form on:submit|preventDefault={handleSubmit}>
+        <form on:submit|preventDefault="{handleSubmit}">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input
                     type="text"
                     id="username"
-                    bind:value={username}
+                    bind:value="{username}"
                     placeholder="Enter your username"
                 />
             </div>
@@ -39,7 +39,7 @@
                 <input
                     type="text"
                     id="channelCode"
-                    bind:value={channelCode}
+                    bind:value="{channelCode}"
                     placeholder="Enter channel code or leave empty to create new"
                 />
             </div>
@@ -96,7 +96,7 @@
     button {
         width: 100%;
         padding: 0.75rem;
-        background-color: #4CAF50;
+        background-color: #4caf50;
         color: white;
         border: none;
         border-radius: 4px;

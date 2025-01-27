@@ -1,5 +1,5 @@
 :root {
-    --primary-color: #4CAF50;
+    --primary-color: #4caf50;
     --primary-hover: #45a049;
     --text-color: #333;
     --text-light: #666;
@@ -8,7 +8,8 @@
     --error-color: #ff4444;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;

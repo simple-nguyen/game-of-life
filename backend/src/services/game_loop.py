@@ -18,6 +18,10 @@ class CellRemoval:
     y: int
 
 
+def _normalize_color(color: str) -> str:
+    return color.upper() if color else color
+
+
 def _average_colors(colors: List[str]) -> str:
     """Calculate the average of multiple hex colors.
 
@@ -74,7 +78,7 @@ class GameLoop:
         """
         if self.is_within_grid(x, y):
             logger.info(f"Placing cell at ({x}, {y}) with color {color}")
-            self.cells[(x, y)] = color
+            self.cells[(x, y)] = _normalize_color(color)
         else:
             logger.warning(f"Attempted to place cell outside grid at ({x}, {y})")
 
@@ -89,14 +93,15 @@ class GameLoop:
             logger.info(f"Removing cell at ({x}, {y})")
             del self.cells[(x, y)]
 
-    def get_state(self) -> List[dict]:
+    def get_state(self) -> List[Dict[str, str]]:
         """Get the current state of the game.
 
         Returns:
             List of dictionaries containing cell positions and colors
         """
         return [
-            {"x": x, "y": y, "color": color} for (x, y), color in self.cells.items()
+            {"x": x, "y": y, "color": _normalize_color(color)}
+            for (x, y), color in self.cells.items()
         ]
 
     def _get_neighbors(self, x: int, y: int) -> List[Tuple[int, int]]:

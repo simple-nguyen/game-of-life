@@ -1,8 +1,9 @@
-`<script lang="ts">
+<script lang="ts">
     import { onMount, onDestroy } from 'svelte';
     import { wsService, gameState } from '$lib/services/websocket';
     import GameCanvas from './GameCanvas.svelte';
     import UserList from './UserList.svelte';
+    import Pattern from './Pattern.svelte';
     import { goto } from '$app/navigation';
 
     let username: string;
@@ -32,6 +33,7 @@
 
     <div class="game-content">
         <aside class="side-nav">
+            <Pattern />
             <UserList />
         </aside>
         <main class="game-area">
@@ -45,26 +47,32 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: #4b504f;
     }
 
     .top-nav {
-        background-color: #333;
-        color: white;
+        background-color: white;
+        color: black;
         padding: 1rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        border-radius: 0.5rem;
     }
 
     .game-info {
         display: flex;
         gap: 1rem;
+        border-radius: 0.5rem;
     }
 
     .game-content {
         flex: 1;
         display: flex;
         overflow: hidden;
+        gap: 0.5rem;
     }
 
     .side-nav {
@@ -72,16 +80,25 @@
         background-color: #f5f5f5;
         border-right: 1px solid #ddd;
         overflow-y: auto;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        gap: 0.5rem;
+        flex-direction: column;
+        display: flex;
     }
 
     .game-area {
         flex: 1;
-        overflow: hidden;
-        padding: 1rem;
+        overflow: auto;
+        border-radius: 0.5rem;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: start;
     }
 
     h1 {
         margin: 0;
         font-size: 1.5rem;
     }
-</style>`
+</style>
