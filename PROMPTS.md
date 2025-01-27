@@ -76,3 +76,8 @@ Write tests for backend - primarly game_loop
 ```
 write backend tests to test the game_loop
 ```
+
+Added additional test - beacon
+```
+add another test in game_loop for the beacon pattern
+```

@@ -132,3 +132,71 @@ def test_color_averaging(game):
         # Color should be some mix of the original colors
         color = new_state[pos]
         assert color != "#FF0000" and color != "#00FF00" and color != "#0000FF"
+
+
+def test_next_generation_beacon_pattern(game):
+    """Test that a beacon pattern evolves correctly through its phases.
+    
+    A beacon is a period-2 oscillator that consists of two overlapping blocks
+    where the overlapping corner cells oscillate.
+    """
+    # Create a beacon pattern:
+    # XX..
+    # XX..
+    # ..XX
+    # ..XX
+    game.place_cell(1, 1, "#FF0000")
+    game.place_cell(2, 1, "#FF0000")
+    game.place_cell(1, 2, "#FF0000")
+    game.place_cell(2, 2, "#FF0000")
+    game.place_cell(3, 3, "#FF0000")
+    game.place_cell(4, 3, "#FF0000")
+    game.place_cell(3, 4, "#FF0000")
+    game.place_cell(4, 4, "#FF0000")
+
+    # First generation should fill in the middle
+    new_state = game.next_generation()
+    
+    # In the next generation, we should see:
+    # XX..
+    # XXX.
+    # .XXX
+    # ..XX
+    expected_alive = {
+        (1, 1), (2, 1),  # Top block
+        (1, 2),  # Middle row
+        (4, 3),  # Middle row
+        (3, 4), (4, 4),  # Bottom block
+    }
+    
+    # Check that all expected cells are alive
+    for pos in expected_alive:
+        assert pos in new_state, f"Expected cell at {pos} to be alive"
+    
+    # Check that no unexpected cells are alive
+    for pos in new_state:
+        assert pos in expected_alive, f"Unexpected cell at {pos}"
+    
+    # Check total number of cells
+    assert len(new_state) == len(expected_alive), "Wrong number of cells in next generation"
+
+
+def test_beacon_pattern_updates_and_removals(game):
+    """Test that the beacon pattern generates correct updates and removals."""
+    # Place the initial beacon pattern
+    game.place_cell(1, 1, "#FF0000")
+    game.place_cell(2, 1, "#FF0000")
+    game.place_cell(1, 2, "#FF0000")
+    game.place_cell(2, 2, "#FF0000")
+    game.place_cell(3, 3, "#FF0000")
+    game.place_cell(4, 3, "#FF0000")
+    game.place_cell(3, 4, "#FF0000")
+    game.place_cell(4, 4, "#FF0000")
+
+    # Get updates and removals for the first generation
+    _, removals = game.update_game_state()
+
+    # Should have no removals in the first phase
+    assert len(removals) == 2
+    assert CellRemoval(2,2) in removals
+    assert CellRemoval(3,3) in removals
