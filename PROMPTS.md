@@ -53,3 +53,16 @@ Added pre-commit to python, keep files in the backend
 Fix error 
 [ERROR] Cowardly refusing to install hooks with `core.hooksPath` set.
 ```
+
+Adding dockerfile to frontend for ease of installation / running
+Update our backend at same time
+Add docker-compose.yml
+Update root readme
+```
+Add dockerfile to frontend
+Update backend dockerfile to match existing codebase
+Added docker-compose.yml to run from root for both backend and frontend
+Fix husky in dockerfile
+Fix husky in local development for any os
+Update root README
+```

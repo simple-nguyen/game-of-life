@@ -29,6 +29,11 @@ app.add_middleware(
 websocket_service = WebSocketService()
 
 
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+
 @app.websocket("/ws/{channel_code}/{username}")
 async def websocket_endpoint(websocket: WebSocket, channel_code: str, username: str):
     session = None

@@ -1,4 +1,4 @@
-# Conway's Game of life
+# Conway's Game of Life
 
 ## Problem
 This project implements Conway's Game of Life with a multiplayer aspect. The principles of the Game of Life are as follows:
@@ -18,8 +18,30 @@ When a player joins, they will be assigned a random colour. A player will be ide
 
 When cells are reproduced, the new generation will have cells of the colour that is an average of the neighbouring cells.
 
-## How to run project
-Note: Copy the .env.example into .env and set accordingly the env variables
+## Quick Start with Docker Compose
+
+The easiest way to run the entire application:
+
+```bash
+# Copy environment file
+cp .env.example .env
+
+# Build and start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+```
+
+The application will be available at:
+- Frontend: http://localhost:80
+- Backend API: http://localhost:8000
+- WebSocket: ws://localhost:8000/ws
+
+## Development Setup
 
 ### Backend
 ```bash
@@ -30,6 +52,12 @@ pip install -r requirements.txt
 uvicorn src.main:app --reload
 ```
 
+The backend includes:
+- FastAPI for the REST API and WebSocket server
+- Automatic code formatting with black and isort
+- Linting with flake8
+- Testing with pytest
+
 ### Frontend
 ```bash
 cd frontend
@@ -37,24 +65,42 @@ npm install
 npm run dev
 ```
 
-The game will be available at http://localhost:5173
+The frontend includes:
+- SvelteKit for the UI
+- TypeScript for type safety
+- ESLint and Prettier for code quality
+- Husky for pre-commit hooks
 
-## How to build project
+The development server will be available at http://localhost:5173
+
+## Code Quality
 
 ### Backend
+- Automatic formatting with black and isort
+- Linting with flake8 (including docstring checks)
+- Pre-commit hooks for Python files
+
+Run checks manually:
 ```bash
 cd backend
-docker build -t game-of-life-backend .
-docker run -p 8000:8000 game-of-life-backend
+black .
+isort .
+flake8 .
 ```
 
 ### Frontend
+- ESLint for JavaScript/TypeScript linting
+- Prettier for code formatting
+- Pre-commit hooks for all frontend files
+
+Run checks manually:
 ```bash
 cd frontend
-npm run build
+npm run lint
+npm run format
 ```
 
-## How to test project
+## Testing
 
 ### Backend
 ```bash
@@ -68,22 +114,75 @@ cd frontend
 npm run test
 ```
 
-## Decisions
-- Websockets as the transport layer for real-time updates and support multiple clients
-- Github Actions for CI/CD
-- Terraform for IaC with AWS as infrastructre provider
-    - ECS for deploying dockerised backend
+## Building for Production
+
+### Using Docker Compose (Recommended)
+```bash
+# Build all services
+docker-compose build
+
+# Run in production mode
+docker-compose up -d
+```
+
+### Individual Services
+
+Backend:
+```bash
+cd backend
+docker build -t game-of-life-backend .
+docker run -p 8000:8000 game-of-life-backend
+```
+
+Frontend:
+```bash
+cd frontend
+docker build -t game-of-life-frontend .
+docker run -p 80:80 game-of-life-frontend
+```
+
+## Architecture Decisions
+- WebSockets for real-time updates and multiple clients
+- GitHub Actions for CI/CD
+- Terraform for IaC with AWS as infrastructure provider
+    - ECS for deploying dockerized backend
     - Load balancer in front of ECS
-    - S3 + Cloudfront for frontend
-- Dockerised backend and deployed on ECS for managed service
-    - Python
-- Frontend to be deployed as built files onto S3 + Cloudfront
-    - Svelte + Typescript
-    - Grid will be drawn on HTML Canvas
-- Used mathemematical average of neighbouring cells to determine colour of new cells
-- Game board will be limited to 100x100 to explore some interesting patterns
-- Game board will not be toroidal to simplify calcuations for this iteration
-- Using a sparse calculation approach as not all cells will be live, don't iterate over dead cells
+    - S3 + CloudFront for frontend
+- Dockerized services with Docker Compose for easy deployment
+    - Python backend with FastAPI
+    - SvelteKit frontend with Nginx
+- Used mathematical average of neighbouring cells for new cell colors
+- Game board limited to 100x100 for interesting patterns
+- Non-toroidal board for simplified calculations
+- Sparse calculation approach for performance optimization
+
+## Project Structure
+```
+.
+├── backend/                 # Python FastAPI backend
+│   ├── src/                # Source code
+│   ├── tests/              # Test files
+│   ├── Dockerfile         # Backend container definition
+│   └── requirements.txt   # Python dependencies
+├── frontend/               # SvelteKit frontend
+│   ├── src/               # Source code
+│   ├── static/            # Static assets
+│   └── Dockerfile        # Frontend container definition
+├── docker-compose.yml     # Multi-container definition
+├── .env.example          # Environment variables template
+└── README.md             # This file
+```
+
+## Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and ensure all checks pass
+5. Submit a pull request
 
 ## Challenges / Interesting Encounters
-- Decent AI initialise of project
+- Decent AI initialization of project
+- Managing real-time state across multiple clients
+- Color inheritance calculations
+- Docker configuration for development and production
+- Cross-service communication setup

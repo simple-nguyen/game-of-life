@@ -12,8 +12,7 @@
         "lint:fix": "eslint \"src/**/*.{js,ts,svelte}\" --fix",
         "format": "prettier --write \"src/**/*.{js,ts,svelte,css}\"",
         "format:check": "prettier --check \"src/**/*.{js,ts,svelte,css}\"",
-        "prepare": "cd .. && husky install frontend/.husky && chmod ug+x frontend/.husky/*",
-        "postinstall": "node -e \"try { require('husky').install() } catch (e) { if (e.code !== 'MODULE_NOT_FOUND') throw e }\"",
+        "prepare": "if [ -z \"$SKIP_HUSKY\" ]; then cd .. && husky install frontend/.husky; fi",
         "pre-commit": "lint-staged"
     },
     "lint-staged": {
@@ -25,12 +24,13 @@
             "prettier --write"
         ],
         "*.py": [
-            "../scripts/lint-python.sh"
+            "node scripts/lint-python.js"
         ]
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
         "@sveltejs/adapter-auto": "^3.0.0",
+        "@sveltejs/adapter-static": "^3.0.1",
         "@sveltejs/kit": "^2.0.0",
         "@sveltejs/vite-plugin-svelte": "^3.0.0",
         "@tsconfig/svelte": "^5.0.2",
